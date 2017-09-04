@@ -5,15 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <style>
-      .preview {
+      .preview-outer {
         width: 1000px;
         height: 500px;
         margin: 0 auto;
         background-color: #ccc;
+        position: relative;
+        overflow: hidden;
+      }
+      .preview {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        margin: auto;
+        text-align: center;
+      }
+      .preview img {
+        display: block;
+        max-width: 100%;
+      }
+      .test {
+        width: 220px;
+        height: 216px;
+        border: 1px solid #000;
       }
 
     </style>
@@ -22,9 +40,16 @@
     <form method="post">
       <input type="file">
     </form>
-
-    <div class="preview"></div>
-
+    
+    <div class="preview-outer">
+      <div class="preview"></div>
+    </div>
+    
+    <div id="test1" class="test"><img src="8_bg-lion.png" alt=""></div>
+    <div id="test2" class="test"><img src="9_bg-lion.png" alt=""></div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript">
       $(function(){
         //画像ファイルプレビュー表示のイベント追加 fileを選択時に発火するイベントを登録
@@ -43,18 +68,45 @@
           reader.onload = (function(file) {
             return function(e) {
               //既存のプレビューを削除
+              var $imgW = 0;
+              var $imgH = 0;
+              // $preview.css({
+              //   width: $imgW,
+              //   height: $imgH
+              // });
               $preview.empty();
               // .prevewの領域の中にロードした画像を表示するimageタグを追加
               $preview.append($('<img>').attr({
                 src: e.target.result,
                 // width: "1000px",
                 // class: "preview",
+                id: "image",
                 title: file.name
               }));
+
+              // 画像の高さ・幅を親要素に代入する。
+              $(".preview img").bind("load",function(){
+                $imgW = $(".preview img").width();
+                $imgH = $(".preview img").height();
+                $preview.css({
+                  width: $imgW,
+                  height: $imgH
+                });
+              });
             };
           })(file);
 
           reader.readAsDataURL(file);
+        });
+
+        $("#test1").draggable();
+        $("#test2").draggable();
+        $("image").droppable({
+          drop: function( event, ui ) {
+            $(this).css({
+              opacity: "0.9"
+            });
+          }
         });
       });
     </script>
